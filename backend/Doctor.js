@@ -1,7 +1,0 @@
-class Doctor extends User {
-
-    
-
-
-
-}
