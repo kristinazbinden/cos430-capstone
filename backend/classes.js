@@ -7,16 +7,17 @@ class User
         this.password = this.hashPassword(password); 
         
 }
-
-deleteaccount(){
-
-}
 }
 
 class Patient extends User {
     constructor(name, username, id, password) {
         super(name, username, id, password);
         this.verified = false;
+        this.medications = [];
+        this.doctors = [];
+    }
+    deleteaccount(){
+/*sql request to delete self*/
     }
 }
 
@@ -24,15 +25,24 @@ class Doctor extends User {
     constructor(name, username, id, password) {
         super(name, username, id, password);
         this.patients = [];
-        this.verified = false;
-}
+        this.verified = false;   
+    }
+    deleteaccount(){
+        /*sql request to delete self*/
+            }
 }
 class Admin extends User {
     constructor(name, username, id, password) {
         super(name, username, id, password);
 
     }
+    approveaccount(){
 
+    }
+    deleteaccount(userid){
+        id = User.id;
+        /*sql request to delete user*/
+            }
 }
 
 
