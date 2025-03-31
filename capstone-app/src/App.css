@@ -1,0 +1,109 @@
+.App {
+  text-align: center;
+}
+
+/* Color Palette */
+:root {
+  --background-color: #f5f3f9; /* Light lavender */
+  --box-color: #ffffff; /* White for contrast */
+  --primary-color: #9068be; /* Soft purple */
+  --secondary-color: #d3d3d3; /* Light gray */
+  --text-color: #4a4a4a; /* Dark gray for readability */
+  --button-color: #7d3cff; /* Vibrant purple */
+  --button-hover-color: #6a2dbb; /* Slightly darker purple */
+}
+
+/* General Styles */
+body {
+  margin: 0;
+  font-family: "Arial", sans-serif;
+  background-image: url('background.png');
+  color: var(--text-color);
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+/* App Container */
+.app-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Welcome Screen */
+.welcome-screen {
+  text-align: center;
+}
+
+.welcome-title {
+  font-size: 2rem;
+  color: var(--primary-color);
+  padding: 0 20px;
+}
+
+.welcome-subtitle {
+  font-size: 1.2rem;
+  color: var(--text-color);
+}
+
+.button-group {
+  margin-top: 2rem;
+}
+
+button.submit-button, button.back-button {
+  width: 100%;
+}
+
+button.option-button {
+  margin: 0.5rem;
+}
+
+button.back-button {
+  margin-top: 2px;
+}
+
+button.option-button, button.submit-button, button.back-button {
+  background-color: var(--button-color);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button.option-button:hover, button.submit-button:hover, button.back-button:hover {
+  background-color: var(--button-hover-color);
+}
+
+/* Form Screen */
+.form-screen {
+  background-color: var(--box-color);
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-title {
+  font-size: 1.8rem;
+  color: var(--primary-color);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+label {
+  display: block;
+  padding-bottom: 5px;
+}
+
+input {
+  padding:.7rem;
+  border-radius:.6rem;
+  width: calc(100% - 25px);
+}
+
+input[type=email], input[type=password] {
+border: 1px solid var(--primary-color);
+}
