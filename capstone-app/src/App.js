@@ -13,7 +13,7 @@ function App() {
       {screen === "welcome" && (
         <div className="welcome-screen">
           <h1 className="welcome-title">Welcome To My Med App!</h1>
-          <p className="welcome-subtitle">Choose an option:</p>
+          <p className="welcome-subtitle">Choose an option below:</p>
           <div className="button-group">
             <button
               className="option-button"
