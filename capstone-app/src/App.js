@@ -1,12 +1,43 @@
 import React, { useState } from "react";
+import { createUser } from "../database.js";
 import "./App.css";
 
 function App() {
   const [screen, setScreen] = useState("welcome"); // Tracks which screen to display
 
+  const [userData, setUserData] = userData({
+    firstname: '',
+    lastname: '',
+    email: '',
+    password: '',
+  });
+
   const handleScreenChange = (newScreen) => {
     setScreen(newScreen);
   };
+
+  // handle input
+  const handleInput = (e) => {
+    const { name, value } = e.target;
+    setUserData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  // handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      // Send data to database.js
+      await createUser(userData);
+      alert('Your profile has been created!');
+    } catch (error) {
+      console.error('Error saving data:', error);
+      alert('Something went wrong! Please try again.');
+    }
+  };
+  
 
   return (
     <div className="app-container">
@@ -62,22 +93,46 @@ function App() {
 
       {screen === "signup" && (
         <div className="form-screen">
-          <h2 className="form-title">Sign Up</h2>
-          <form>
+          <h2 className="form-title"> Up</h2>
+          <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="name">Full Name</label>
-              <input type="text" id="name" placeholder="Enter your full name" />
+              <label htmlFor="firstname">First Name</label>
+              <input 
+                type="text" 
+                id="firstname" 
+                name="firstname"
+                placeholder="Enter your first name" 
+                value={userData.firstname}
+                />
+            </div>
+            <div className="form-group">
+              <label htmlFor="lastname">Last Name</label>
+              <input 
+                type="text" 
+                id="lastname" 
+                name="lastname"
+                placeholder="Enter your last name" 
+                value={userData.lastname}
+              />
             </div>
             <div className="form-group">
               <label htmlFor="email">Email Address</label>
-              <input type="email" id="email" placeholder="Enter your email" />
+              <input 
+                type="text" 
+                id="email" 
+                name="email"
+                placeholder="Enter your email. This will be your username to login." 
+                value={userData.email}
+              />
             </div>
             <div className="form-group">
               <label htmlFor="password">Password</label>
               <input
-                type="password"
-                id="password"
-                placeholder="Create a password"
+                type="text" 
+                id="password" 
+                name="password"
+                placeholder="Enter your password. Make it unique!" 
+                value={userData.password}
               />
             </div>
             <button type="submit" className="submit-button">

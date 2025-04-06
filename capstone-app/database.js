@@ -14,6 +14,23 @@ const pool = mysql.createPool({
   database: process.env.MYSQL_DATABASE    // MySQL database name
 }).promise()  // Return a promise-based connection pool
 
+// Create user in database
+export async function createUser(userData) {
+  console.log('Saving data:', userData);
+  const [result] = await pool.query(`
+    INSERT INTO users
+    (firstname, lastname, email, password)
+    VALUES (?, ?, ?, ?)
+  `, [
+    userData.firstname,
+    userData.lastname,
+    userData.email,
+    userData.password
+  ]);
+
+  return result;
+}
+
 // Fetch and return a list of all patients from the 'patients' table
 export async function getPatientList() {
   const [rows] = await pool.query("SELECT * FROM patients")  // Query to get all patients
@@ -58,6 +75,8 @@ export async function getDoctor(id) {
 
 // const doctor = await getDoctor(5)
 // console.log(doctor)
+
+
 
 // Export the pool for use in other parts of the application
 export default pool
