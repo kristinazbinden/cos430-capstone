@@ -1,22 +1,22 @@
 import React, { useState } from "react";
-// import { createUser } from "./database.js";
 import "./App.css";
 import axios from "axios";
 
 function App() {
   const [screen, setScreen] = useState("welcome"); // Tracks which screen to display
-
   const [userData, setUserData] = useState({
-    username: '',
+    first_name: '',
+    last_name: '',
     email: '',
     password: '',
   });
+  const [userRole, setUserRole] = useState(""); // Tracks if the user is a doctor or patient
 
   const handleScreenChange = (newScreen) => {
     setScreen(newScreen);
   };
 
-  // handle input
+  // Handle input changes
   const handleInput = (e) => {
     const { name, value } = e.target;
     setUserData((prevData) => ({
@@ -25,31 +25,41 @@ function App() {
     }));
   };
 
-  // handle form submission
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Basic validation
     if (!userData.first_name || !userData.last_name || !userData.email || !userData.password) {
-      alert('All fields are required!');
+      alert("All fields are required!");
       return;
     }
 
     if (!/\S+@\S+\.\S+/.test(userData.email)) {
-      alert('Please enter a valid email address!');
+      alert("Please enter a valid email address!");
       return;
     }
 
     try {
-      // Send data to database.js
+      // Send data to backend
       await axios.post("http://localhost:3001/api/users", userData);
-      alert('Your profile has been created!');
+      alert("Your profile has been created!");
+      handleScreenChange("roleSelection"); // Navigate to role selection screen
     } catch (error) {
-      console.error('Error saving data:', error);
-      alert('Something went wrong! Please try again.');
+      console.error("Error saving data:", error);
+      alert("Something went wrong! Please try again.");
     }
   };
-  
+
+  // Handle role selection submission
+  const handleRoleSubmit = () => {
+    if (!userRole) {
+      alert("Please select your role!");
+      return;
+    }
+    alert(`You selected: ${userRole}`);
+    // You can navigate to another screen or perform additional actions here
+  };
 
   return (
     <div className="app-container">
@@ -105,7 +115,7 @@ function App() {
 
       {screen === "signup" && (
         <div className="form-screen">
-          <h2 className="form-title"> Up</h2>
+          <h2 className="form-title">Sign Up</h2>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label htmlFor="first_name">First Name</label>
@@ -116,7 +126,7 @@ function App() {
                 placeholder="Enter your first name" 
                 value={userData.first_name}
                 onChange={handleInput}
-                />
+              />
             </div>
             <div className="form-group">
               <label htmlFor="last_name">Last Name</label>
@@ -159,6 +169,41 @@ function App() {
               onClick={() => handleScreenChange("welcome")}
             >
               Go Back
+            </button>
+          </form>
+        </div>
+      )}
+
+      {screen === "roleSelection" && (
+        <div className="role-selection-screen">
+          <h2>Are you a Doctor or a Patient?</h2>
+          <form onSubmit={(e) => e.preventDefault()}>
+            <div className="form-group">
+              <label>
+                <input
+                  type="radio"
+                  name="role"
+                  value="doctor"
+                  checked={userRole === "doctor"}
+                  onChange={(e) => setUserRole(e.target.value)}
+                />
+                Doctor
+              </label>
+            </div>
+            <div className="form-group">
+              <label>
+                <input
+                  type="radio"
+                  name="role"
+                  value="patient"
+                  checked={userRole === "patient"}
+                  onChange={(e) => setUserRole(e.target.value)}
+                />
+                Patient
+              </label>
+            </div>
+            <button type="button" className="submit-button" onClick={handleRoleSubmit}>
+              Submit Role
             </button>
           </form>
         </div>
