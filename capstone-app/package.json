@@ -41,5 +41,8 @@
       "last 1 safari version"
     ]
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "copyfiles": "^2.4.1"
+  }
 }
