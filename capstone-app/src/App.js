@@ -30,7 +30,7 @@ function App() {
     e.preventDefault();
 
     // Basic validation
-    if (!userData.username || !userData.email || !userData.password) {
+    if (!userData.first_name || !userData.last_name || !userData.email || !userData.password) {
       alert('All fields are required!');
       return;
     }
@@ -108,27 +108,27 @@ function App() {
           <h2 className="form-title"> Up</h2>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="username">First Name</label>
+              <label htmlFor="first_name">First Name</label>
               <input 
                 type="text" 
-                id="username" 
-                name="username"
+                id="first_name" 
+                name="first_name"
                 placeholder="Enter your first name" 
-                value={userData.username}
+                value={userData.first_name}
                 onChange={handleInput}
                 />
             </div>
-            {/* <div className="form-group">
-              <label htmlFor="lastname">Last Name</label>
+            <div className="form-group">
+              <label htmlFor="last_name">Last Name</label>
               <input 
                 type="text" 
-                id="lastname" 
-                name="lastname"
+                id="last_name" 
+                name="last_name"
                 placeholder="Enter your last name" 
-                value={userData.lastname}
+                value={userData.last_name}
                 onChange={handleInput}
               />
-            </div> */}
+            </div>
             <div className="form-group">
               <label htmlFor="email">Email Address</label>
               <input 
