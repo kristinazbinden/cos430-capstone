@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { createUser } from "../database.js";
+// import { createUser } from "./database.js";
 import "./App.css";
+import axios from "axios";
 
 function App() {
   const [screen, setScreen] = useState("welcome"); // Tracks which screen to display
 
-  const [userData, setUserData] = userData({
+  const [userData, setUserData] = useState({
     firstname: '',
     lastname: '',
     email: '',
@@ -30,7 +31,7 @@ function App() {
     e.preventDefault();
     try {
       // Send data to database.js
-      await createUser(userData);
+      await axios.post("http://localhost:3001/api/users", userData);
       alert('Your profile has been created!');
     } catch (error) {
       console.error('Error saving data:', error);
