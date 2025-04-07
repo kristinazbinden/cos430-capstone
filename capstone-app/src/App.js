@@ -7,8 +7,7 @@ function App() {
   const [screen, setScreen] = useState("welcome"); // Tracks which screen to display
 
   const [userData, setUserData] = useState({
-    firstname: '',
-    lastname: '',
+    username: '',
     email: '',
     password: '',
   });
@@ -29,6 +28,18 @@ function App() {
   // handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Basic validation
+    if (!userData.first_name || !userData.last_name || !userData.email || !userData.password) {
+      alert('All fields are required!');
+      return;
+    }
+
+    if (!/\S+@\S+\.\S+/.test(userData.email)) {
+      alert('Please enter a valid email address!');
+      return;
+    }
+
     try {
       // Send data to database.js
       await axios.post("http://localhost:3001/api/users", userData);
@@ -97,23 +108,25 @@ function App() {
           <h2 className="form-title"> Up</h2>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="firstname">First Name</label>
+              <label htmlFor="first_name">First Name</label>
               <input 
                 type="text" 
-                id="firstname" 
-                name="firstname"
+                id="first_name" 
+                name="first_name"
                 placeholder="Enter your first name" 
-                value={userData.firstname}
+                value={userData.first_name}
+                onChange={handleInput}
                 />
             </div>
             <div className="form-group">
-              <label htmlFor="lastname">Last Name</label>
+              <label htmlFor="last_name">Last Name</label>
               <input 
                 type="text" 
-                id="lastname" 
-                name="lastname"
+                id="last_name" 
+                name="last_name"
                 placeholder="Enter your last name" 
-                value={userData.lastname}
+                value={userData.last_name}
+                onChange={handleInput}
               />
             </div>
             <div className="form-group">
@@ -124,16 +137,18 @@ function App() {
                 name="email"
                 placeholder="Enter your email. This will be your username to login." 
                 value={userData.email}
+                onChange={handleInput}
               />
             </div>
             <div className="form-group">
               <label htmlFor="password">Password</label>
               <input
-                type="text" 
+                type="password" 
                 id="password" 
                 name="password"
                 placeholder="Enter your password. Make it unique!" 
                 value={userData.password}
+                onChange={handleInput}
               />
             </div>
             <button type="submit" className="submit-button">
