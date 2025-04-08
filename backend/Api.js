@@ -43,7 +43,7 @@ const ClinicalTablesAPI = {
 export default ClinicalTablesAPI;
 
 
-async function main() {
+async function test() {
   const query = "advil";
   const meds = await ClinicalTablesAPI.searchmedications(query);
 
@@ -58,7 +58,7 @@ async function main() {
   });
 }
 
-main();
+test();
 
 
 
