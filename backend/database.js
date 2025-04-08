@@ -1,6 +1,7 @@
 // Import the necessary modules for MySQL connection and environment variable management
 import mysql from 'mysql2'
 import dotenv from 'dotenv'
+import { User, Patient, Doctor, Admin } from './classes.js'
 
 // Load environment variables from the .env file
 dotenv.config()
@@ -28,18 +29,56 @@ export async function testDatabaseConnection() {
 
 // Create user in database
 export async function createUser(userData) {
-  console.log('Saving data:', userData);
-  const [result] = await pool.query(`
-    INSERT INTO users
-    (first_name, last_name, email, password)
-    VALUES (?, ?, ?, ?)
-  `, [
-    userData.first_name,
-    userData.last_name,
-    userData.email,
-    userData.password
-  ]);
+  try {
+    // First create User instance with hashed password
+    const user = await User.create(
+      userData.first_name,
+      userData.last_name,
+      userData.email,
+      userData.password
+    );
 
+    const [result] = await pool.query(`
+      INSERT INTO users
+      (first_name, last_name, email, password)
+      VALUES (?, ?, ?, ?)
+    `, [
+      user.first_name,
+      user.last_name,
+      user.email,
+      user.password
+    ]);
+
+    return result;
+  } catch (error) {
+      console.error('Error creating user:', error);
+      throw error;
+  }
+}
+
+export async function createDoctor(doctorData) {
+  const [result] = await pool.query(`
+    INSERT INTO doctors 
+    (user_id, specialty, license_number) 
+    VALUES (?, ?, ?)
+  `, [
+    doctorData.id, // Assuming you have user ID from initial registration
+    doctorData.specialty,
+    doctorData.license_number
+  ]);
+  return result;
+}
+
+export async function createPatient(patientData) {
+  const [result] = await pool.query(`
+    INSERT INTO patients 
+    (user_id, date_of_birth, insurance_provider) 
+    VALUES (?, ?, ?)
+  `, [
+    patientData.id, // Assuming you have user ID from initial registration
+    patientData.date_of_birth,
+    patientData.insurance_provider
+  ]);
   return result;
 }
 
@@ -75,58 +114,7 @@ export async function getDoctor(id) {
   return rows[0]  // Return the doctor object (only one result)
 }
 
-// Uncomment these lines for testing purposes
-// const patients = await getPatientList()
-// console.log(patients)
-
-// const doctors = await getDoctorList()
-// console.log(doctors)
-
-// const patient = await getPatient(10)
-// console.log(patient)
-
-// const doctor = await getDoctor(5)
-// console.log(doctor)
-
-
 
 // Export the pool for use in other parts of the application
 export default pool
 
-
-// // Self-test when this file is run directly
-// if (import.meta.url.endsWith(process.argv[1])) {
-//   (async () => {
-//     console.log('=== Starting database connection test ===');
-    
-//     try {
-//       // Test connection
-//       console.log('Testing database connection...');
-//       const isConnected = await testDatabaseConnection();
-//       console.log(isConnected ? '✅ Connection successful' : '❌ Connection failed');
-
-//       // Test basic query
-//       console.log('\nTesting patients query...');
-//       const patients = await getPatientList();
-//       console.log(`Found ${patients.length} patients`);
-
-//       // Test doctors query
-//       console.log('\nTesting doctors query...');
-//       const doctors = await getDoctorList();
-//       console.log(`Found ${doctors.length} doctors`);
-
-//       // Test connection pool
-//       console.log('\nTesting connection pool...');
-//       const connection = await pool.getConnection();
-//       console.log('✔️ Successfully acquired connection from pool');
-//       connection.release();
-      
-//       console.log('\n=== All tests completed successfully ===');
-//       process.exit(0);
-//     } catch (error) {
-//       console.error('\n=== Test failed ===');
-//       console.error(error);
-//       process.exit(1);
-//     }
-//   })();
-// }

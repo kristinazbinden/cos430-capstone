@@ -1,48 +1,41 @@
-class User
-{
-    constructor(name, username, id, password) {
-        this.name = name;
-        this.username = username;
-        this.id = id;
-        this.password = this.hashPassword(password); 
-        
-}
-}
+// classes.js
+import bcrypt from 'bcrypt';
+const saltRounds = 10;
 
-class Patient extends User {
-    constructor(name, username, id, password) {
-        super(name, username, id, password);
-        this.verified = false;
-        this.medications = [];
-        this.doctors = [];
-    }
-    deleteaccount(){
-/*sql request to delete self*/
-    }
+export class User {
+  constructor(first_name, last_name, email, password) {
+    this.first_name = first_name;
+    this.last_name = last_name;
+    this.email = email;
+    this.password = password; 
+  }
+
+  static async create(first_name, last_name, email, originalPassword) {
+    const salt = await bcrypt.genSalt(saltRounds);
+    const hash = await bcrypt.hash(originalPassword, salt);
+    return new User(first_name, last_name, email, hash);
+  }
 }
 
-class Doctor extends User {
-    constructor(name, username, id, password) {
-        super(name, username, id, password);
-        this.patients = [];
-        this.verified = false;   
-    }
-    deleteaccount(){
-        /*sql request to delete self*/
-            }
-}
-class Admin extends User {
-    constructor(name, username, id, password) {
-        super(name, username, id, password);
-
-    }
-    approveaccount(){
-
-    }
-    deleteaccount(userid){
-        id = User.id;
-        /*sql request to delete user*/
-            }
+export class Patient extends User {
+  constructor(first_name, last_name, email, password) {
+    super(first_name, last_name, email, password);
+    this.verified = false;
+    this.medications = [];
+    this.doctors = [];
+  }
 }
 
+export class Doctor extends User {
+  constructor(first_name, last_name, email, password) {
+    super(first_name, last_name, email, password);
+    this.patients = [];
+    this.verified = false;   
+  }
+}
 
+export class Admin extends User {
+  constructor(first_name, last_name, email, password) {
+    super(first_name, last_name, email, password);
+  }
+}

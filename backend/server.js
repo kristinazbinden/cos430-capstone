@@ -19,6 +19,8 @@ app.get('/', (req, res) => {
   res.send('Welcome to the API!'); // Respond with a simple message
 });
 
+
+// Initial Post Request for Users
 app.post('/api/users', async (req, res) => {
   try {
     const userData = req.body; // Extract user data from request body
@@ -31,6 +33,31 @@ app.post('/api/users', async (req, res) => {
       error: error.message, 
       stack: process.env.NODE_ENV === 'development' ? error.stack : undefined 
     });
+  }
+});
+
+// Create Doctor
+app.post('/api/doctors', async (req, res) => {
+  try {
+    const doctorData = req.body;
+    // Add logic to save doctor-specific data
+    res.status(201).json({ message: 'Doctor created!' });
+  } catch (error) {
+    console.error('Error creating doctor:', error);
+    res.status(500).json({ message: 'Failed to create doctor' });
+  }
+});
+
+
+// Create Patient
+app.post('/api/patients', async (req, res) => {
+  try {
+    const patientData = req.body;
+    // Add logic to save patient-specific data
+    res.status(201).json({ message: 'Patient created!' });
+  } catch (error) {
+    console.error('Error creating patient:', error);
+    res.status(500).json({ message: 'Failed to create patient' });
   }
 });
 
