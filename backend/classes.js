@@ -34,8 +34,30 @@ export class Doctor extends User {
   }
 }
 
+<<<<<<< HEAD
 export class Admin extends User {
   constructor(first_name, last_name, email, password) {
     super(first_name, last_name, email, password);
   }
 }
+=======
+export class medication {
+    constructor(n,d)
+    {
+        this.medicationName=n
+        this.dose=d
+        this.rating=100
+    }
+}
+
+export class prescription extends medication {
+    constructor(n,d,f,s,e)
+    {
+        super(n,d)
+        frequency=f
+        startDate=s
+        endDate=e
+    }
+}
+
+>>>>>>> 4271fb6 (Add Clinical Tables API helper and test script)
