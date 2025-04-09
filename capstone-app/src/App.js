@@ -44,6 +44,7 @@ function App() {
       // Simulate successful signup (replace with actual API call)
       await new Promise((resolve) => setTimeout(resolve, 1000));
       alert("Your profile has been created!");
+      setScreen("roleSelection");
     } catch (error) {
       console.error("Error saving data:", error);
       alert("Something went wrong! Please try again.");
