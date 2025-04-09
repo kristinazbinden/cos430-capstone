@@ -1,5 +1,5 @@
 // classes.js
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 const saltRounds = 10;
 
 export class User {
@@ -34,13 +34,13 @@ export class Doctor extends User {
   }
 }
 
-<<<<<<< HEAD
+
 export class Admin extends User {
   constructor(first_name, last_name, email, password) {
     super(first_name, last_name, email, password);
   }
 }
-=======
+
 export class medication {
     constructor(n,d)
     {
@@ -60,4 +60,4 @@ export class prescription extends medication {
     }
 }
 
->>>>>>> 4271fb6 (Add Clinical Tables API helper and test script)
+
