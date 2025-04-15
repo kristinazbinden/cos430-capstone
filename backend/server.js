@@ -1,22 +1,21 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import bodyParser from "body-parser";
 import { createUser } from "./database.js"; // Note the .js extension
 
 dotenv.config();
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001
 import { testDatabaseConnection } from './database.js';
 
 // Middleware
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 
 // Route
 app.get('/', (req, res) => {
-  res.send('Welcome to the API!'); // Respond with a simple message
+  res.send('Backend is running'); // Respond with a simple message
 });
 
 
