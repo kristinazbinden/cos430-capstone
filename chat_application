@@ -425,7 +425,6 @@
                 
                 try {
                     // Create WebSocket connection
-                    // If using a service like PieSocket or your own server, modify the URL accordingly
                     socket = new WebSocket(serverUrl);
                     
                     // Connection opened
