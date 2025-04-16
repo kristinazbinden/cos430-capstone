@@ -302,7 +302,7 @@
 
     <!-- Main Chat Interface -->
     <div class="header">
-        <span>Networked Chat</span>
+        <span>Doctor Patient Chat</span>
         <span class="room-info" id="roomInfo">Not connected</span>
     </div>
     
