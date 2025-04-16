@@ -20,17 +20,12 @@ export class User {
 export class Patient extends User {
   constructor(first_name, last_name, email, password) {
     super(first_name, last_name, email, password);
-    this.verified = false;
-    this.medications = [];
-    this.doctors = [];
   }
 }
 
 export class Doctor extends User {
   constructor(first_name, last_name, email, password) {
     super(first_name, last_name, email, password);
-    this.patients = [];
-    this.verified = false;   
   }
 }
 

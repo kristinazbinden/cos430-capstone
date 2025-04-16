@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const RoleSelectionScreen = ({ onRoleSelect }) => {
+const RoleSelectionScreen = ({ onRoleSelect, userData }) => { // Receive userData
   const [userRole, setUserRole] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleRoleSubmit = async () => {
     if (!userRole) {
@@ -11,17 +12,38 @@ const RoleSelectionScreen = ({ onRoleSelect }) => {
     }
 
     const backendURL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
+    setLoading(true);
 
     try {
       if (userRole === "doctor") {
-        const response = await axios.post(`${backendURL}/api/doctors`, {}); // You might send more doctor-specific data here
-        console.log("Doctor role submitted:", response.data);
+        if (!userData?.first_name || !userData?.last_name || !userData?.email || !userData?.password) {
+          alert("Missing user information. Please go back and complete signup.");
+          setLoading(false);
+          return;
+        }
+        const response = await axios.post(`${backendURL}/api/doctors`, {
+          first_name: userData.first_name,
+          last_name: userData.last_name,
+          email: userData.email,
+          password: userData.password,
+        });
+        console.log("Doctor created:", response.data);
         alert(response.data.message);
         onRoleSelect(userRole);
         // Navigate to doctor-specific area
       } else if (userRole === "patient") {
-        const response = await axios.post(`${backendURL}/api/patients`, {}); // You might send more patient-specific data here
-        console.log("Patient role submitted:", response.data);
+        if (!userData?.first_name || !userData?.last_name || !userData?.email || !userData?.password) {
+          alert("Missing user information. Please go back and complete signup.");
+          setLoading(false);
+          return;
+        }
+        const response = await axios.post(`${backendURL}/api/patients`, {
+          first_name: userData.first_name,
+          last_name: userData.last_name,
+          email: userData.email,
+          password: userData.password,
+        });
+        console.log("Patient created:", response.data);
         alert(response.data.message);
         onRoleSelect(userRole);
         // Navigate to patient-specific area
@@ -33,6 +55,8 @@ const RoleSelectionScreen = ({ onRoleSelect }) => {
       } else {
         alert("Failed to submit role. Please try again.");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -64,8 +88,8 @@ const RoleSelectionScreen = ({ onRoleSelect }) => {
             Patient
           </label>
         </div>
-        <button type="button" className="submit-button" onClick={handleRoleSubmit}>
-          Submit Role
+        <button type="button" className="submit-button" onClick={handleRoleSubmit} disabled={loading}>
+          {loading ? "Submit Role" : "Awaiting selection..."}
         </button>
       </form>
     </div>
