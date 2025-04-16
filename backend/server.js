@@ -1,7 +1,10 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import { createUser } from "./database.js"; // Note the .js extension
+import bcrypt from 'bcryptjs';
+import mysql from "mysql2/promise"; // Use promise-based MySQL library
+import { createUser, createDoctor, createPatient } from "./database.js"; // Note the .js extension
+import pool from "./database.js"; // Import the database pool
 
 dotenv.config();
 
@@ -39,11 +42,15 @@ app.post('/api/users', async (req, res) => {
 app.post('/api/doctors', async (req, res) => {
   try {
     const doctorData = req.body;
-    // Add logic to save doctor-specific data
-    res.status(201).json({ message: 'Doctor created!' });
+    const result = await createDoctor(doctorData);
+    res.status(201).json({ message: 'Doctor created succesfully!', result });
   } catch (error) {
     console.error('Error creating doctor:', error);
-    res.status(500).json({ message: 'Failed to create doctor' });
+    res.status(500).json({
+      message: 'Server error', 
+      error: error.message, 
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined 
+    });
   }
 });
 
@@ -52,11 +59,50 @@ app.post('/api/doctors', async (req, res) => {
 app.post('/api/patients', async (req, res) => {
   try {
     const patientData = req.body;
-    // Add logic to save patient-specific data
-    res.status(201).json({ message: 'Patient created!' });
+    const result = await createPatient(patientData);
+    res.status(201).json({ message: 'Patient created successfully!', result });
   } catch (error) {
     console.error('Error creating patient:', error);
-    res.status(500).json({ message: 'Failed to create patient' });
+    res.status(500).json({
+      message: 'Server error', 
+      error: error.message, 
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined 
+    });
+  }
+});
+
+// Login Endpoint
+app.post('/api/login', async (req, res) => {
+  const { email, password } = req.body;
+  console.log('Login attempt:', { email, password });
+
+  try {
+    // Search in doctors table
+    const [doctorRows] = await pool.query('SELECT * FROM doctors WHERE email = ?', [email]);
+    if (doctorRows.length > 0) {
+      const doctor = doctorRows[0];
+      const passwordMatch = await bcrypt.compare(password, doctor.password);
+      if (passwordMatch) {
+        return res.json({ success: true, role: 'doctor' });
+      }
+    }
+
+    // Search in patients table
+    const [patientRows] = await pool.query('SELECT * FROM patients WHERE email = ?', [email]);
+    if (patientRows.length > 0) {
+      const patient = patientRows[0];
+      const passwordMatch = await bcrypt.compare(password, patient.password);
+      if (passwordMatch) {
+        return res.json({ success: true, role: 'patient' });
+      }
+    }
+
+    // If no match found in either table
+    res.status(401).json({ success: false, message: 'Invalid email or password' });
+
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ success: false, message: 'Server error during login' });
   }
 });
 

@@ -23,12 +23,18 @@ const App = () => {
 
   const handleRoleSelect = (role) => {
     setUserRole(role);
-    // Here, you'd typically route to different parts of your application
-    // based on the user's role.  For this example, we'll just
-    // render placeholder components.
     if (role === "doctor") {
       setScreen("doctor");
-    } else {
+    } else if (role === "patient") {
+      setScreen("patient");
+    }
+  };
+
+  const handleLoginSuccess = (role) => {
+    setUserRole(role);
+    if (role === "doctor") {
+      setScreen("doctor");
+    } else if (role === "patient") {
       setScreen("patient");
     }
   };
@@ -38,11 +44,11 @@ const App = () => {
       case "welcome":
         return <WelcomeScreen onLogin={() => handleScreenChange("login")} onSignup={() => handleScreenChange("signup")} />;
       case "login":
-        return <LoginScreen onBack={() => handleScreenChange("welcome")} />;
+        return <LoginScreen onBack={() => handleScreenChange("welcome")} onLoginSuccess={handleLoginSuccess} />;
       case "signup":
         return <SignupScreen onSignup={handleSignup} onBack={() => handleScreenChange("welcome")} />;
       case "roleSelection":
-        return <RoleSelectionScreen onRoleSelect={handleRoleSelect} />;
+        return <RoleSelectionScreen onRoleSelect={handleRoleSelect} userData={userData} />; // Pass userData here
       case "doctor":
         return <DoctorView />;
       case "patient":

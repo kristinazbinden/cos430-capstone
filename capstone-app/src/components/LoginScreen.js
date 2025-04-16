@@ -1,19 +1,34 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
-const LoginScreen = ({ onBack }) => {
+const LoginScreen = ({ onBack, onLoginSuccess }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Implement login logic here
-    console.log("Login submitted", { email, password });
-    alert(`Logging in with email: ${email} and password: ${password}`);
+    setError("");
+
+    try {
+      const backendURL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
+      const response = await axios.post(`${backendURL}/api/login`, { email, password });
+
+      if (response.data.success) {
+        onLoginSuccess(response.data.role); // Notify App component about successful login and role
+      } else {
+        setError(response.data.message || "Invalid credentials");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      setError("Failed to log in. Please try again.");
+    }
   };
 
   return (
     <div className="form-screen">
       <h2 className="form-title">Log In</h2>
+      {error && <p className="error-message">{error}</p>}
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="email">Email Address</label>

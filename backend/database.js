@@ -57,29 +57,59 @@ export async function createUser(userData) {
 }
 
 export async function createDoctor(doctorData) {
-  const [result] = await pool.query(`
-    INSERT INTO doctors 
-    (user_id, specialty, license_number) 
-    VALUES (?, ?, ?)
-  `, [
-    doctorData.id, // Assuming you have user ID from initial registration
-    doctorData.specialty,
-    doctorData.license_number
-  ]);
-  return result;
+  try {
+    // First create Doctor instance with hashed password
+    const doctor = await Doctor.create(
+      doctorData.first_name,
+      doctorData.last_name,
+      doctorData.email,
+      doctorData.password
+    );
+
+    const [result] = await pool.query(`
+      INSERT INTO doctors
+      (first_name, last_name, email, password)
+      VALUES (?, ?, ?, ?)
+    `, [
+      doctor.first_name,
+      doctor.last_name,
+      doctor.email,
+      doctor.password
+    ]);
+
+    return result;
+  } catch (error) {
+      console.error('Error creating user:', error);
+      throw error;
+  }
 }
 
 export async function createPatient(patientData) {
-  const [result] = await pool.query(`
-    INSERT INTO patients 
-    (user_id, date_of_birth, insurance_provider) 
-    VALUES (?, ?, ?)
-  `, [
-    patientData.id, // Assuming you have user ID from initial registration
-    patientData.date_of_birth,
-    patientData.insurance_provider
-  ]);
-  return result;
+  try {
+    // First create Patient instance with hashed password
+    const patient = await Patient.create(
+      patientData.first_name,
+      patientData.last_name,
+      patientData.email,
+      patientData.password
+    );
+
+    const [result] = await pool.query(`
+      INSERT INTO patients
+      (first_name, last_name, email, password)
+      VALUES (?, ?, ?, ?)
+    `, [
+      patient.first_name,
+      patient.last_name,
+      patient.email,
+      patient.password
+    ]);
+
+    return result;
+  } catch (error) {
+      console.error('Error creating user:', error);
+      throw error;
+  }
 }
 
 // Fetch and return a list of all patients from the 'patients' table

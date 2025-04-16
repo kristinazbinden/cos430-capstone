@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 
 const useForm = (initialValues) => {
   const [values, setValues] = useState(initialValues);
@@ -23,7 +22,7 @@ const SignupScreen = ({ onSignup, onBack }) => {
     password: "",
   });
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     // Basic validation
@@ -37,23 +36,7 @@ const SignupScreen = ({ onSignup, onBack }) => {
       return;
     }
 
-    try {
-      // **Replace the setTimeout with an actual API call**
-      const backendURL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001'; // Use environment variable for production
-
-      const response = await axios.post(`${backendURL}/api/users`, userData);
-
-      console.log("Signup successful:", response.data);
-      alert(response.data.message); // Show the message from the backend
-      onSignup(userData); // Pass data to parent for role selection
-    } catch (error) {
-      console.error("Error saving data:", error);
-      if (error.response && error.response.data && error.response.data.message) {
-        alert(`Signup failed: ${error.response.data.message}`);
-      } else {
-        alert("Something went wrong! Please try again.");
-      }
-    }
+    onSignup(userData); // Pass userData to the parent (App.js)
   };
 
   return (
@@ -105,7 +88,7 @@ const SignupScreen = ({ onSignup, onBack }) => {
           />
         </div>
         <button type="submit" className="submit-button">
-          Sign Up
+          Next: Select Role
         </button>
         <button className="back-button" onClick={onBack}>
           Go Back
