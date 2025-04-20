@@ -49,9 +49,10 @@ class Patient {
 // This block of code runs only when the patient.js file is directly executed (not imported).
 // It checks if the current file (patient.js) is the one being run using `import.meta.url` and 
 // ensures that the test code doesn't run if the file is imported elsewhere in the project.
+if (import.meta.url.endsWith('patient.js')) {
     (async () => {
       try {
-        const patientId = 8; // example id
+        const patientId = 8; // example patient ID
   
         const doctor = await Patient.getAssignedDoctor(patientId)
         console.log('Assigned Doctor:', doctor)
@@ -65,10 +66,11 @@ class Patient {
       } catch (error) {
         console.error(error.message)
       } finally {
-        await db.end();
+        await db.end(); // Close the database connection after testing
       }
     })()
-  }
+  }  
+  
 
 // ✅ Export the class for other files
 export default Patient
