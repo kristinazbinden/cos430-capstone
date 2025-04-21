@@ -150,6 +150,22 @@ export async function getDoctor(id) {
   return rows[0]  // Return the doctor object (only one result)
 }
 
+export async function prescibe(patientId, prescriptionData) {
+  const [result] = await pool.query(`
+    INSERT INTO medication 
+    (patient_id, medication_name, dosage, frequency, start_date, end_date) 
+    VALUES (?, ?, ?, ?, ?, ?)
+  `, [
+    patientId,
+    prescriptionData.medicationName,
+    prescriptionData.dose,
+    prescriptionData.frequency,
+    prescriptionData.startDate,
+    prescriptionData.endDate
+  ]);
+
+  return result;
+}
 
 // Export the pool for use in other parts of the application
 export default pool
