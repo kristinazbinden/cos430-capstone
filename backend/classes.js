@@ -1,6 +1,5 @@
 // classes.js
 import bcrypt from 'bcryptjs';
-// const { randomUUID } = require('crypto');
 const saltRounds = 10;
 
 export class User {
@@ -14,7 +13,6 @@ export class User {
   static async create(first_name, last_name, email, originalPassword) {
     const salt = await bcrypt.genSalt(saltRounds);
     const hash = await bcrypt.hash(originalPassword, salt);
-    // const id = randomUUID();
     return new User(first_name, last_name, email, hash);
   }
 }
