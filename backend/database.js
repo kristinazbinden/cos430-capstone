@@ -35,8 +35,7 @@ export async function createUser(userData) {
       userData.first_name,
       userData.last_name,
       userData.email,
-      userData.password,
-      userData.id
+      userData.password
     );
 
     const [result] = await pool.query(`
@@ -47,8 +46,7 @@ export async function createUser(userData) {
       user.first_name,
       user.last_name,
       user.email,
-      user.password,
-      user.id
+      user.password
     ]);
 
     return result;
@@ -65,8 +63,7 @@ export async function createDoctor(doctorData) {
       doctorData.first_name,
       doctorData.last_name,
       doctorData.email,
-      doctorData.password,
-      doctorData.id
+      doctorData.password
     );
 
     const [result] = await pool.query(`
@@ -77,8 +74,7 @@ export async function createDoctor(doctorData) {
       doctor.first_name,
       doctor.last_name,
       doctor.email,
-      doctor.password,
-      doctor.id
+      doctor.password
     ]);
 
     return result;
@@ -95,8 +91,7 @@ export async function createPatient(patientData) {
       patientData.first_name,
       patientData.last_name,
       patientData.email,
-      patientData.password,
-      patientData.id
+      patientData.password
     );
 
     const [result] = await pool.query(`
@@ -107,8 +102,7 @@ export async function createPatient(patientData) {
       patient.first_name,
       patient.last_name,
       patient.email,
-      patient.password,
-      patient.id
+      patient.password
     ]);
 
     return result;
