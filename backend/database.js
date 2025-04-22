@@ -112,10 +112,13 @@ export async function createPatient(patientData) {
   }
 }
 
-// Fetch and return a list of all patients from the 'patients' table
-export async function getPatientList() {
-  const [rows] = await pool.query("SELECT * FROM patients")  // Query to get all patients
-  return rows  // Return the list of patients
+// Fetch and return a list of patients by their doctor's ID
+export async function getPatientList(id) {
+  const [rows] = await pool.query(
+    "SELECT * FROM patients WHERE primary_doctor_id = ?",
+    [id]
+  );
+  return rows;
 }
 
 // Fetch and return a list of all doctors from the 'doctors' table
@@ -162,5 +165,5 @@ export async function prescibe(patientId, prescriptionData) {
 }
 
 // Export the pool for use in other parts of the application
-export default pool
+export { pool };
 

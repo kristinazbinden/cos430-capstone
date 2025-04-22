@@ -36,7 +36,7 @@ const MedicationSearchScreen = () => {
   };
 
   return (
-    <div className="form-screen" style={{ maxHeight: "100vh", overflow: "auto", padding: "1rem" }}>
+    <div className="contained-screen">
       <h2 className="form-title">Search Medication</h2>
       {error && <p className="error-message">{error}</p>}
       <form onSubmit={handleSearch}>
