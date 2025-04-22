@@ -24,11 +24,40 @@ body {
 }
 
 /* App Container */
-.app-container {
+
+/* .app-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
+} */
+
+.form-screen,
+.welcome-screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  font-family: "Arial", sans-serif;
+  background-image: url('background.png');
+  color: var(--text-color);
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.contained-screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 90vh;
+  margin: 0;
+  font-family: "Arial", sans-serif;
+  background-color: white;
+  color: var(--text-color);
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
 /* Welcome Screen */
