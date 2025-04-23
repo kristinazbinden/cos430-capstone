@@ -1,10 +1,12 @@
 import express from "express";
+import jwt from "jsonwebtoken";
+import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import cors from "cors";
 import bcrypt from 'bcryptjs';
 import mysql from "mysql2/promise"; // Use promise-based MySQL library
-import { createUser, createDoctor, createPatient } from "./database.js"; // Note the .js extension
-import pool from "./database.js"; // Import the database pool
+import { createUser, createDoctor, createPatient, getPatientList } from "./database.js"; // Note the .js extension
+import { pool } from "./database.js";
 
 dotenv.config();
 
@@ -15,6 +17,7 @@ import { testDatabaseConnection } from './database.js';
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 
 // Route
 app.get('/', (req, res) => {
@@ -54,7 +57,6 @@ app.post('/api/doctors', async (req, res) => {
   }
 });
 
-
 // Create Patient
 app.post('/api/patients', async (req, res) => {
   try {
@@ -71,40 +73,116 @@ app.post('/api/patients', async (req, res) => {
   }
 });
 
+// Get patients by doctor ID
+app.get('/api/patients', async (req, res) => {
+  try {
+    const doctor_id = req.query.doctor_id || 6; // Use query param or default to 6
+    const result = await getPatientList(doctor_id);
+    res.status(200).json(result); // Return the array directly, not wrapped in {result: ...}
+  } catch (error) {
+    console.error('Error finding patients:', error);
+    res.status(500).json({
+      message: 'Server error', 
+      error: error.message
+    });
+  }
+});
+
 // Login Endpoint
+// Update login endpoint
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
-  console.log('Login attempt:', { email, password });
 
   try {
-    // Search in doctors table
+    // Doctor login
     const [doctorRows] = await pool.query('SELECT * FROM doctors WHERE email = ?', [email]);
     if (doctorRows.length > 0) {
       const doctor = doctorRows[0];
       const passwordMatch = await bcrypt.compare(password, doctor.password);
       if (passwordMatch) {
-        return res.json({ success: true, role: 'doctor' });
+        const token = jwt.sign(
+          { id: doctor.doctor_id, role: 'doctor' },
+          process.env.JWT_SECRET,
+          { expiresIn: '1h' }
+        );
+        return res.cookie('jwt', token, { httpOnly: true, secure: true })
+                  .json({ success: true, role: 'doctor' });
       }
     }
 
-    // Search in patients table
+    // Patient login
     const [patientRows] = await pool.query('SELECT * FROM patients WHERE email = ?', [email]);
     if (patientRows.length > 0) {
       const patient = patientRows[0];
       const passwordMatch = await bcrypt.compare(password, patient.password);
       if (passwordMatch) {
-        return res.json({ success: true, role: 'patient' });
+        const token = jwt.sign(
+          { id: patient.patient_id, role: 'patient' },
+          process.env.JWT_SECRET,
+          { expiresIn: '1h' }
+        );
+        return res.cookie('jwt', token, { httpOnly: true, secure: true })
+                  .json({ success: true, role: 'patient' });
       }
     }
 
-    // If no match found in either table
-    res.status(401).json({ success: false, message: 'Invalid email or password' });
-
+    res.status(401).json({ success: false, message: 'Invalid credentials' });
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ success: false, message: 'Server error during login' });
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 });
+app.post('/api/medications', async (req, res) => {
+  const {
+    patient_id,
+    medication_name,
+    dosage,
+    frequency,
+    start_date,
+    end_date
+  } = req.body;
+
+  if (!patient_id || !medication_name || !dosage || !frequency || !start_date || !end_date) {
+    return res.status(400).json({ message: 'Missing required medication fields.' });
+  }
+
+  try {
+    const [result] = await pool.query(
+      `INSERT INTO medications 
+       (patient_id, medication_name, dosage, frequency, start_date, end_date) 
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [patient_id, medication_name, dosage, frequency, start_date, end_date]
+    );
+
+    console.log("Inserted medication:", result);
+    res.status(201).json({ message: 'Medication prescribed successfully!', result });
+  } catch (error) {
+    console.error('Error inserting medication:', error);
+    res.status(500).json({ message: 'Failed to prescribe medication', error: error.message });
+  }
+});
+
+
+const authenticate = async (req, res, next) => {
+  try {
+    const token = req.cookies.jwt;
+    if (!token) return res.status(401).json({ message: 'Unauthorized' });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    // Verify user exists in database
+    const table = decoded.role === 'doctor' ? 'doctors' : 'patients';
+    const [user] = await pool.query(`SELECT * FROM ${table} WHERE ${table}_id = ?`, [decoded.id]);
+    
+    if (!user) return res.status(401).json({ message: 'Invalid user' });
+    
+    req.user = { id: decoded.id, role: decoded.role };
+    next();
+  } catch (err) {
+    console.error('Authentication error:', err);
+    res.status(401).json({ message: 'Invalid token' });
+  }
+};
 
 // Start the server
 app.listen(PORT, () => {
