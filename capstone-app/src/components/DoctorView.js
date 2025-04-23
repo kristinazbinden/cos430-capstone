@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import MedicationSearchScreen from './MedicationSearchScreen.js';
 import ViewPatientList from './ViewPatientList.js'; 
+import PrescriptionPage from "./PrescriptionPage.js";
 
 
 // Dummy components for demo
@@ -18,6 +19,8 @@ const DoctorView = ({ onSignOut }) => {
         return <ViewPatientList />;
       case 'messages':
         return <MessagePatients />;
+      case 'prescribe':
+        return <PrescriptionPage />;
       default:
         return null;
     }
@@ -43,6 +46,9 @@ const DoctorView = ({ onSignOut }) => {
         </button>
         <button className="option-button" onClick={() => setActiveView('messages')} style={{ margin: '0.5rem 1rem' }}>
           Message Patients
+        </button>
+        <button className="option-button" onClick={() => setActiveView('prescribe')} style={{ margin: '0.5rem 1rem' }}>
+          manage prescriptions
         </button>
         <button className="option-button" onClick={onSignOut} style={{ margin: '0.5rem 1rem', marginTop: 'auto' }}>
           Sign Out

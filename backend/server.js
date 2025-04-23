@@ -6,7 +6,7 @@ import cors from "cors";
 import bcrypt from 'bcryptjs';
 import mysql from "mysql2/promise"; // Use promise-based MySQL library
 import { createUser, createDoctor, createPatient, getPatientList } from "./database.js"; // Note the .js extension
-import pool from "./database.js"; // Import the database pool
+import { pool } from "./database.js";
 
 dotenv.config();
 
@@ -132,6 +132,36 @@ app.post('/api/login', async (req, res) => {
     res.status(500).json({ success: false, message: 'Server error' });
   }
 });
+app.post('/api/medications', async (req, res) => {
+  const {
+    patient_id,
+    medication_name,
+    dosage,
+    frequency,
+    start_date,
+    end_date
+  } = req.body;
+
+  if (!patient_id || !medication_name || !dosage || !frequency || !start_date || !end_date) {
+    return res.status(400).json({ message: 'Missing required medication fields.' });
+  }
+
+  try {
+    const [result] = await pool.query(
+      `INSERT INTO medications 
+       (patient_id, medication_name, dosage, frequency, start_date, end_date) 
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [patient_id, medication_name, dosage, frequency, start_date, end_date]
+    );
+
+    console.log("Inserted medication:", result);
+    res.status(201).json({ message: 'Medication prescribed successfully!', result });
+  } catch (error) {
+    console.error('Error inserting medication:', error);
+    res.status(500).json({ message: 'Failed to prescribe medication', error: error.message });
+  }
+});
+
 
 const authenticate = async (req, res, next) => {
   try {
