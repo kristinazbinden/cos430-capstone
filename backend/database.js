@@ -165,5 +165,5 @@ export async function prescibe(patientId, prescriptionData) {
 }
 
 // Export the pool for use in other parts of the application
-export { pool };
+export default pool;
 
