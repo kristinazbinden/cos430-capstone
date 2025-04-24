@@ -6,7 +6,7 @@ import cors from "cors";
 import bcrypt from 'bcryptjs';
 import mysql from "mysql2/promise"; // Use promise-based MySQL library
 import { createUser, createDoctor, createPatient, getPatientList } from "./database.js"; // Note the .js extension
-import { pool } from "./database.js";
+import pool from "./database.js";
 
 dotenv.config();
 
