@@ -3,7 +3,7 @@ import ViewPatientList from './ViewPatientList.js';
 import MedicationSearchScreen from './MedicationSearchScreen.js';
 import axios from 'axios';
 
-const PrescriptionPage = () => {
+const PrescriptionPage = ({ userData }) => {
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [selectedMedication, setSelectedMedication] = useState(null);
   const [frequency, setFrequency] = useState("Once daily");
@@ -43,7 +43,8 @@ const PrescriptionPage = () => {
     <div style={{ padding: '2rem' }}>
       <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
         <div style={{ flex: 1 }}>
-          <ViewPatientList onSelectPatient={setSelectedPatient} />
+          {/* Pass userData to ViewPatientList */}
+          <ViewPatientList userData={userData} onSelectPatient={setSelectedPatient} />
         </div>
         <div style={{ flex: 1 }}>
           <MedicationSearchScreen onSelectMedication={setSelectedMedication} />

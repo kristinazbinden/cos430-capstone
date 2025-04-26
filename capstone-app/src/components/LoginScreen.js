@@ -15,7 +15,8 @@ const LoginScreen = ({ onBack, onLoginSuccess }) => {
       const response = await axios.post(`${backendURL}/api/login`, { email, password });
 
       if (response.data.success) {
-        onLoginSuccess(response.data.role); // Notify App component about successful login and role
+        // Pass role and user data (e.g., email) to the parent
+        onLoginSuccess(response.data.role, { email: email });
       } else {
         setError(response.data.message || "Invalid credentials");
       }

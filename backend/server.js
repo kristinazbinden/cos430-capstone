@@ -188,6 +188,32 @@ app.get('/api/patientByEmail', async (req, res) => {
   }
 });
 
+// Get a doctor by email
+app.get('/api/doctorByEmail', async (req, res) => {
+  const { email } = req.query;
+console.log("made it here");
+  if (!email) {
+    return res.status(400).json({ message: 'Email query parameter is required.' });
+  }
+
+  try {
+    const [rows] = await pool.query(`
+      SELECT * 
+      FROM doctors
+      WHERE email = ?
+    `, [email]);
+
+    if (rows.length > 0) {
+      res.status(200).json(rows[0]); // Return the first matching doctor
+    } else {
+      res.status(404).json({ message: 'No doctor found with that email.' });
+    }
+  } catch (error) {
+    console.error('Error fetching doctor by email:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
 // Assign a patient to a doctor
 app.put('/api/assignPatient', async (req, res) => {
   const { patient_id, doctor_id } = req.body;

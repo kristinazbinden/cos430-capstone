@@ -1,37 +1,66 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const ViewPatientList = () => {
+const ViewPatientList = ({ userData }) => {
     const [patients, setPatients] = useState([]);
-    const [selectedPatient, setSelectedPatient] = useState(null);    
+    const [selectedPatient, setSelectedPatient] = useState(null);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState(""); // State for email input
-    const primary_doctor_id = 6;
+    const [primaryDoctorId, setPrimaryDoctorId] = useState(null); // Initialize as null
 
+    // Fetch the doctor's ID using the user's email
+    useEffect(() => {
+        const fetchDoctorId = async () => {
+            if (!userData?.email) {
+                console.error("User email is not available.");
+                return;
+            }
+
+            try {
+                const backendURL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
+                console.log("here"+userData.email);
+                const response = await axios.get(`${backendURL}/api/doctorByEmail?email=${userData.email}`);
+                if (response.data?.doctor_id) {
+                    setPrimaryDoctorId(response.data.doctor_id); // Set the doctor's ID
+                } else {
+                    console.error("No doctor found with the provided email.");
+                }
+            } catch (error) {
+                console.error("Error fetching doctor ID:", error);
+            }
+        };
+
+        fetchDoctorId();
+    }, [userData]);
+
+    // Fetch patients for the current doctor
     useEffect(() => {
         const fetchPatients = async () => {
-          setLoading(true);
-          setError("");
-      
-          try {
-            const backendURL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
-            const response = await axios.get(`${backendURL}/api/patients?doctor_id=${primary_doctor_id}`);
-      
-            if (Array.isArray(response.data)) {
-              setPatients(response.data);
-            } else {
-              setError("Invalid patient data received");
+            if (!primaryDoctorId) return; // Wait until the doctor ID is fetched
+
+            setLoading(true);
+            setError("");
+
+            try {
+                const backendURL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
+                const response = await axios.get(`${backendURL}/api/patients?doctor_id=${primaryDoctorId}`);
+
+                if (Array.isArray(response.data)) {
+                    setPatients(response.data);
+                } else {
+                    setError("Invalid patient data received");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                setError("No patients found.");
+            } finally {
+                setLoading(false);
             }
-          } catch (error) {
-            console.error("Error:", error);
-            setError("No patients found.");
-          } finally {
-            setLoading(false);
-          }
         };
+
         fetchPatients();
-      }, []);
+    }, [primaryDoctorId]);
 
     const handleSelectPatient = (patient) => {
         setSelectedPatient(patient);
@@ -166,7 +195,7 @@ const ViewPatientList = () => {
                                     const backendURL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
                                     const response = await axios.put(`${backendURL}/api/assignPatient`, {
                                         patient_id: selectedPatient.patient_id,
-                                        doctor_id: primary_doctor_id
+                                        doctor_id: primaryDoctorId
                                     });
 
                                     if (response.status === 200) {

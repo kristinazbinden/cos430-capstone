@@ -1,26 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MedicationSearchScreen from './MedicationSearchScreen.js';
 import ViewPatientList from './ViewPatientList.js'; 
 import PrescriptionPage from "./PrescriptionPage.js";
 
+const MessagePatients = ({ userData }) => (
+  <div>
+    <h3>Message Patients</h3>
+    <p>Logged in as: {userData?.email}</p>
+  </div>
+);
 
-// Dummy components for demo
-// const ViewPatients = () => <div><h3>Patient List</h3></div>;
-const MessagePatients = () => <div><h3>Message Patients</h3></div>;
-
-const DoctorView = ({ onSignOut }) => {
+const DoctorView = ({ userData, onSignOut }) => {
   const [activeView, setActiveView] = useState('medication');
+
+  // Log userData when the component loads
+  useEffect(() => {
+    console.log("User Data:", userData);
+  }, [userData]);
 
   const renderContent = () => {
     switch (activeView) {
       case 'medication':
-        return <MedicationSearchScreen />;
+        return <MedicationSearchScreen userData={userData} />;
       case 'patients':
-        return <ViewPatientList />;
+        return <ViewPatientList userData={userData} />;
       case 'messages':
-        return <MessagePatients />;
+        return <MessagePatients userData={userData} />;
       case 'prescribe':
-        return <PrescriptionPage />;
+        return <PrescriptionPage userData={userData} />;
       default:
         return null;
     }
@@ -48,7 +55,7 @@ const DoctorView = ({ onSignOut }) => {
           Message Patients
         </button>
         <button className="option-button" onClick={() => setActiveView('prescribe')} style={{ margin: '0.5rem 1rem' }}>
-          manage prescriptions
+          Manage Prescriptions
         </button>
         <button className="option-button" onClick={onSignOut} style={{ margin: '0.5rem 1rem', marginTop: 'auto' }}>
           Sign Out
