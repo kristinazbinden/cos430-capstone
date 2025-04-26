@@ -137,6 +137,22 @@ export async function getPatient(id) {
   return rows[0]  // Return the patient object (only one result)
 }
 
+// Fetch and return a specific patient by their email
+export async function getPatientByEmail(email) {
+  try {
+    const [rows] = await pool.query(`
+      SELECT * 
+      FROM patients
+      WHERE email = ?  // Use a parameterized query to avoid SQL injection
+    `, [email]);  // Pass the email as a parameter
+
+    return rows[0];  // Return the first matching patient (or undefined if no match)
+  } catch (error) {
+    console.error('Error fetching patient by email:', error);
+    throw error;
+  }
+}
+
 // Fetch and return a specific doctor by their doctor ID
 export async function getDoctor(id) {
   const [rows] = await pool.query(`

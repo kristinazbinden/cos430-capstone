@@ -162,6 +162,31 @@ app.post('/api/medications', async (req, res) => {
   }
 });
 
+// Get a patient by email
+app.get('/api/patientByEmail', async (req, res) => {
+  const { email } = req.query;
+
+  if (!email) {
+    return res.status(400).json({ message: 'Email query parameter is required.' });
+  }
+
+  try {
+    const [rows] = await pool.query(`
+      SELECT * 
+      FROM patients
+      WHERE email = ?
+    `, [email]);
+
+    if (rows.length > 0) {
+      res.status(200).json(rows[0]); // Return the first matching patient
+    } else {
+      res.status(404).json({ message: 'No patient found with that email.' });
+    }
+  } catch (error) {
+    console.error('Error fetching patient by email:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
 
 const authenticate = async (req, res, next) => {
   try {
