@@ -188,6 +188,32 @@ app.get('/api/patientByEmail', async (req, res) => {
   }
 });
 
+// Assign a patient to a doctor
+app.put('/api/assignPatient', async (req, res) => {
+  const { patient_id, doctor_id } = req.body;
+
+  if (!patient_id || !doctor_id) {
+    return res.status(400).json({ message: 'Patient ID and Doctor ID are required.' });
+  }
+
+  try {
+    const [result] = await pool.query(`
+      UPDATE patients
+      SET primary_doctor_id = ?
+      WHERE patient_id = ?
+    `, [doctor_id, patient_id]); // Use primary_doctor_id instead of doctor_id
+
+    if (result.affectedRows > 0) {
+      res.status(200).json({ message: 'Patient assigned to doctor successfully.' });
+    } else {
+      res.status(404).json({ message: 'Patient not found.' });
+    }
+  } catch (error) {
+    console.error('Error assigning patient to doctor:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
 const authenticate = async (req, res, next) => {
   try {
     const token = req.cookies.jwt;

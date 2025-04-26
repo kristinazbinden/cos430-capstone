@@ -157,6 +157,42 @@ const ViewPatientList = () => {
                         <p><strong>Email:</strong> {selectedPatient.email}</p>
                         <p><strong>Phone:</strong> {selectedPatient.phone_number || 'N/A'}</p>
                     </div>
+
+                    {/* Check if the selected patient is in the current patient list */}
+                    {!patients.some(patient => patient.patient_id === selectedPatient.patient_id) && (
+                        <button
+                            onClick={async () => {
+                                try {
+                                    const backendURL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
+                                    const response = await axios.put(`${backendURL}/api/assignPatient`, {
+                                        patient_id: selectedPatient.patient_id,
+                                        doctor_id: primary_doctor_id
+                                    });
+
+                                    if (response.status === 200) {
+                                        alert('Patient successfully assigned to the doctor.');
+                                        // Optionally, refresh the patient list
+                                        setPatients([...patients, selectedPatient]);
+                                    }
+                                } catch (error) {
+                                    console.error('Error assigning patient to doctor:', error);
+                                    alert('Failed to assign patient to the doctor.');
+                                }
+                            }}
+                            style={{
+                                marginTop: '1rem',
+                                padding: '0.5rem 1rem',
+                                fontSize: '0.9rem',
+                                backgroundColor: '#28a745',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            Add Patient
+                        </button>
+                    )}
                 </div>
             )}
         </div>
