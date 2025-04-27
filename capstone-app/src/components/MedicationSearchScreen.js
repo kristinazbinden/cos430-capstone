@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ClinicalTablesAPI from '../Api.js';
 
-const MedicationSearchScreen = () => {
+const MedicationSearchScreen = ({ onSelectMedication }) => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [error, setError] = useState("");
@@ -32,7 +32,10 @@ const MedicationSearchScreen = () => {
   };
 
   const handleSelectMedication = (medication) => {
-    setSelectedMedication(medication);
+    setSelectedMedication(medication); // Update the selected medication locally
+    if (onSelectMedication) {
+      onSelectMedication(medication); // Notify the parent component
+    }
   };
 
   return (

@@ -6,7 +6,7 @@ import cors from "cors";
 import bcrypt from 'bcryptjs';
 import mysql from "mysql2/promise"; // Use promise-based MySQL library
 import { createUser, createDoctor, createPatient, getPatientList } from "./database.js"; // Note the .js extension
-import { pool } from "./database.js";
+import pool from "./database.js";
 
 dotenv.config();
 
@@ -162,6 +162,130 @@ app.post('/api/medications', async (req, res) => {
   }
 });
 
+// Get a patient by email
+app.get('/api/patientByEmail', async (req, res) => {
+  const { email } = req.query;
+
+  if (!email) {
+    return res.status(400).json({ message: 'Email query parameter is required.' });
+  }
+
+  try {
+    const [rows] = await pool.query(`
+      SELECT * 
+      FROM patients
+      WHERE email = ?
+    `, [email]);
+
+    if (rows.length > 0) {
+      res.status(200).json(rows[0]); // Return the first matching patient
+    } else {
+      res.status(404).json({ message: 'No patient found with that email.' });
+    }
+  } catch (error) {
+    console.error('Error fetching patient by email:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Get a doctor by email
+app.get('/api/doctorByEmail', async (req, res) => {
+  const { email } = req.query;
+
+  if (!email) {
+    return res.status(400).json({ message: 'Email query parameter is required.' });
+  }
+
+  try {
+    const [rows] = await pool.query(`
+      SELECT * 
+      FROM doctors
+      WHERE email = ?
+    `, [email]);
+
+    if (rows.length > 0) {
+      res.status(200).json(rows[0]); // Return the first matching doctor
+    } else {
+      res.status(404).json({ message: 'No doctor found with that email.' });
+    }
+  } catch (error) {
+    console.error('Error fetching doctor by email:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Get a doctor by ID
+app.get('/api/doctorById', async (req, res) => {
+  const { doctorId } = req.query;
+
+  if (!doctorId) {
+    return res.status(400).json({ message: 'Doctor ID is required.' });
+  }
+
+  try {
+    const [rows] = await pool.query(`
+      SELECT * 
+      FROM doctors
+      WHERE doctor_id = ?
+    `, [doctorId]);
+
+    if (rows.length > 0) {
+      res.status(200).json(rows[0]); // Return the doctor details
+    } else {
+      res.status(404).json({ message: 'No doctor found with that ID.' });
+    }
+  } catch (error) {
+    console.error('Error fetching doctor by ID:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// Assign a patient to a doctor
+app.put('/api/assignPatient', async (req, res) => {
+  const { patient_id, doctor_id } = req.body;
+
+  if (!patient_id || !doctor_id) {
+    return res.status(400).json({ message: 'Patient ID and Doctor ID are required.' });
+  }
+
+  try {
+    const [result] = await pool.query(`
+      UPDATE patients
+      SET primary_doctor_id = ?
+      WHERE patient_id = ?
+    `, [doctor_id, patient_id]); // Use primary_doctor_id instead of doctor_id
+
+    if (result.affectedRows > 0) {
+      res.status(200).json({ message: 'Patient assigned to doctor successfully.' });
+    } else {
+      res.status(404).json({ message: 'Patient not found.' });
+    }
+  } catch (error) {
+    console.error('Error assigning patient to doctor:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+app.get('/api/medicationsByPatientId', async (req, res) => {
+  const { patientId } = req.query;
+
+  if (!patientId) {
+    return res.status(400).json({ message: 'Patient ID is required.' });
+  }
+
+  try {
+    const [rows] = await pool.query(`
+      SELECT * 
+      FROM medications
+      WHERE patient_id = ?
+    `, [patientId]);
+
+    res.status(200).json(rows);
+  } catch (error) {
+    console.error('Error fetching medications by patient ID:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
 
 const authenticate = async (req, res, next) => {
   try {

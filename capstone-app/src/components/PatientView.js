@@ -1,23 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import ViewMedications from './ViewMedications.js';
+import ViewDoctorInfo from './ViewDoctorInfo.js'; // Import the new component
 import axios from 'axios';
 
 // Dummy components for demo
-// const ViewPatients = () => <div><h3>Patient List</h3></div>;
-const MessageDoctor = () => <div><h3>Message Doctor</h3></div>;
-const ViewMedications = () => <div><h3>Message Doctor</h3></div>;
-const ViewDoctorInfo = () => <div><h3>Message Doctor</h3></div>;
+const MessageDoctor = ({ userData }) => (
+  <div>
+    <h3>Message Doctor</h3>
+    <p>Logged in as: {userData?.email}</p>
+  </div>
+);
 
-const PatientView = ({ onSignOut }) => {
+const PatientView = ({ userData, onSignOut }) => {
   const [activeView, setActiveView] = useState('medication');
+
+  useEffect(() => {
+    console.log("User Data in PatientView:", userData);
+  }, [userData]);
 
   const renderContent = () => {
     switch (activeView) {
       case 'medication':
-        return <ViewMedications />;
+        return <ViewMedications userData={userData} />;
       case 'doctor':
-        return <ViewDoctorInfo />;
+        return <ViewDoctorInfo userData={userData} />;
       case 'messages':
-        return <MessageDoctor />;
+        return <MessageDoctor userData={userData} />;
       default:
         return null;
     }
@@ -38,7 +46,7 @@ const PatientView = ({ onSignOut }) => {
         <button className="option-button" onClick={() => setActiveView('medication')} style={{ margin: '0.5rem 1rem' }}>
           My Medications
         </button>
-        <button className="option-button" onClick={() => setActiveView('patients')} style={{ margin: '0.5rem 1rem' }}>
+        <button className="option-button" onClick={() => setActiveView('doctor')} style={{ margin: '0.5rem 1rem' }}>
           Doctor Info
         </button>
         <button className="option-button" onClick={() => setActiveView('messages')} style={{ margin: '0.5rem 1rem' }}>
