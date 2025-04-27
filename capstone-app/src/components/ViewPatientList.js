@@ -96,6 +96,30 @@ const ViewPatientList = ({ userData, onSelectPatient }) => {
         }
     };
 
+    const handleAssignPatient = async () => {
+        if (!selectedPatient || !primaryDoctorId) {
+            alert("Please select a patient to assign.");
+            return;
+        }
+
+        try {
+            const backendURL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
+            const response = await axios.put(`${backendURL}/api/assignPatient`, {
+                patient_id: selectedPatient.patient_id,
+                doctor_id: primaryDoctorId,
+            });
+
+            if (response.status === 200) {
+                alert("Patient assigned to doctor successfully.");
+                setPatients((prevPatients) => [...prevPatients, selectedPatient]); // Add the patient to the list
+                setSelectedPatient(null); // Clear the selected patient
+            }
+        } catch (error) {
+            console.error("Error assigning patient:", error);
+            alert("Failed to assign patient.");
+        }
+    };
+
     return (
         <div className="contained-screen">
             <h2 className="form-title">My Patients</h2>
@@ -173,6 +197,31 @@ const ViewPatientList = ({ userData, onSelectPatient }) => {
                     </button>
                 </div>
             </div>
+
+            {selectedPatient && (
+                <div style={{ marginTop: '1rem' }}>
+                    <h3>Selected Patient</h3>
+                    <p><strong>Name:</strong> {selectedPatient.first_name} {selectedPatient.last_name}</p>
+                    <p><strong>Email:</strong> {selectedPatient.email}</p>
+                    {!patients.some(patient => patient.patient_id === selectedPatient.patient_id) && (
+                        <button
+                            onClick={handleAssignPatient}
+                            style={{
+                                marginTop: '1rem',
+                                padding: '0.5rem 1rem',
+                                fontSize: '0.9rem',
+                                backgroundColor: '#28a745',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            Add Patient
+                        </button>
+                    )}
+                </div>
+            )}
         </div>
     );
 };

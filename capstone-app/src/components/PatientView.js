@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import ViewMedications from './ViewMedications.js'; // Import the new component
+import ViewMedications from './ViewMedications.js';
+import ViewDoctorInfo from './ViewDoctorInfo.js'; // Import the new component
 import axios from 'axios';
 
 // Dummy components for demo
@@ -10,17 +11,9 @@ const MessageDoctor = ({ userData }) => (
   </div>
 );
 
-const ViewDoctorInfo = ({ userData }) => (
-  <div>
-    <h3>Doctor Info</h3>
-    <p>Logged in as: {userData?.email}</p>
-  </div>
-);
-
 const PatientView = ({ userData, onSignOut }) => {
   const [activeView, setActiveView] = useState('medication');
 
-  // Log userData when the component loads
   useEffect(() => {
     console.log("User Data in PatientView:", userData);
   }, [userData]);
