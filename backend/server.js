@@ -191,7 +191,7 @@ app.get('/api/patientByEmail', async (req, res) => {
 // Get a doctor by email
 app.get('/api/doctorByEmail', async (req, res) => {
   const { email } = req.query;
-console.log("made it here");
+
   if (!email) {
     return res.status(400).json({ message: 'Email query parameter is required.' });
   }
@@ -236,6 +236,27 @@ app.put('/api/assignPatient', async (req, res) => {
     }
   } catch (error) {
     console.error('Error assigning patient to doctor:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+app.get('/api/medicationsByPatientId', async (req, res) => {
+  const { patientId } = req.query;
+
+  if (!patientId) {
+    return res.status(400).json({ message: 'Patient ID is required.' });
+  }
+
+  try {
+    const [rows] = await pool.query(`
+      SELECT * 
+      FROM medications
+      WHERE patient_id = ?
+    `, [patientId]);
+
+    res.status(200).json(rows);
+  } catch (error) {
+    console.error('Error fetching medications by patient ID:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const ViewPatientList = ({ userData }) => {
+const ViewPatientList = ({ userData, onSelectPatient }) => {
     const [patients, setPatients] = useState([]);
     const [selectedPatient, setSelectedPatient] = useState(null);
     const [error, setError] = useState("");
@@ -19,7 +19,6 @@ const ViewPatientList = ({ userData }) => {
 
             try {
                 const backendURL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
-                console.log("here"+userData.email);
                 const response = await axios.get(`${backendURL}/api/doctorByEmail?email=${userData.email}`);
                 if (response.data?.doctor_id) {
                     setPrimaryDoctorId(response.data.doctor_id); // Set the doctor's ID
@@ -64,6 +63,9 @@ const ViewPatientList = ({ userData }) => {
 
     const handleSelectPatient = (patient) => {
         setSelectedPatient(patient);
+        if (onSelectPatient) {
+            onSelectPatient(patient); // Notify the parent component
+        }
     };
 
     const handleSearchByEmail = async () => {
@@ -74,14 +76,13 @@ const ViewPatientList = ({ userData }) => {
 
         try {
             const backendURL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
-            console.log(`${backendURL}/api/patientByEmail?email=${email}`);
             const response = await axios.get(`${backendURL}/api/patientByEmail?email=${email}`);
 
-            console.log("Raw Response:", response); // Debugging: Log the raw response
-
             if (response.data) {
-                console.log("Patient Info from Database:", response.data); // Log the result to the console
-                setSelectedPatient(response.data); // Update the selectedPatient state with the search result
+                setSelectedPatient(response.data);
+                if (onSelectPatient) {
+                    onSelectPatient(response.data); // Notify the parent component
+                }
             } else {
                 alert("No patient found with that email.");
             }
@@ -115,7 +116,7 @@ const ViewPatientList = ({ userData }) => {
                         }}
                     >
                         <ul style={{ listStyleType: "none", padding: 0, margin: 0 }}>
-                            {patients.map((patient, index) => (
+                            {patients.map((patient) => (
                                 <li
                                     key={patient.patient_id}
                                     onClick={() => handleSelectPatient(patient)}
@@ -124,9 +125,6 @@ const ViewPatientList = ({ userData }) => {
                                         padding: '8px 0',
                                         borderBottom: '1px solid #eee',
                                         transition: 'background-color 0.2s',
-                                        ':hover': {
-                                            backgroundColor: '#f5f5f5'
-                                        }
                                     }}
                                 >
                                     {patient.first_name} {patient.last_name}
@@ -140,7 +138,6 @@ const ViewPatientList = ({ userData }) => {
                 </div>
             )}
 
-            {/* New field for searching by email */}
             <div style={{ marginTop: '1rem' }}>
                 <label htmlFor="search-patient-email" style={{ display: 'block', marginBottom: '0.5rem' }}>
                     Search Patient by Email:
@@ -176,54 +173,6 @@ const ViewPatientList = ({ userData }) => {
                     </button>
                 </div>
             </div>
-
-            {selectedPatient && (
-                <div className="patient-details" style={{ marginTop: '2rem' }}>
-                    <h3>Patient Details</h3>
-                    <div style={{ background: '#f8f9fa', padding: '1rem', borderRadius: '4px' }}>
-                        <p><strong>Name:</strong> {selectedPatient.first_name} {selectedPatient.last_name}</p>
-                        <p><strong>Date of Birth:</strong> {new Date(selectedPatient.date_of_birth).toLocaleDateString()}</p>
-                        <p><strong>Email:</strong> {selectedPatient.email}</p>
-                        <p><strong>Phone:</strong> {selectedPatient.phone_number || 'N/A'}</p>
-                    </div>
-
-                    {/* Check if the selected patient is in the current patient list */}
-                    {!patients.some(patient => patient.patient_id === selectedPatient.patient_id) && (
-                        <button
-                            onClick={async () => {
-                                try {
-                                    const backendURL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
-                                    const response = await axios.put(`${backendURL}/api/assignPatient`, {
-                                        patient_id: selectedPatient.patient_id,
-                                        doctor_id: primaryDoctorId
-                                    });
-
-                                    if (response.status === 200) {
-                                        alert('Patient successfully assigned to the doctor.');
-                                        // Optionally, refresh the patient list
-                                        setPatients([...patients, selectedPatient]);
-                                    }
-                                } catch (error) {
-                                    console.error('Error assigning patient to doctor:', error);
-                                    alert('Failed to assign patient to the doctor.');
-                                }
-                            }}
-                            style={{
-                                marginTop: '1rem',
-                                padding: '0.5rem 1rem',
-                                fontSize: '0.9rem',
-                                backgroundColor: '#28a745',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '4px',
-                                cursor: 'pointer'
-                            }}
-                        >
-                            Add Patient
-                        </button>
-                    )}
-                </div>
-            )}
         </div>
     );
 };
