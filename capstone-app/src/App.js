@@ -9,6 +9,7 @@ import MedicationSearchScreen from './components/MedicationSearchScreen.js';
 import PatientView from './components/PatientView.js';
 
 
+
 const App = () => {
   const [screen, setScreen] = useState("welcome");
   const [userRole, setUserRole] = useState("");
@@ -32,8 +33,9 @@ const App = () => {
     }
   };
 
-  const handleLoginSuccess = (role) => {
-    setUserRole(role);
+  const handleLoginSuccess = (role, userData) => {
+    setUserRole(role); // Store the user's role
+    setUserData(userData); // Store the user's data (e.g., email, name, etc.)
     if (role === "doctor") {
       setScreen("doctor");
     } else if (role === "patient") {
@@ -52,9 +54,9 @@ const App = () => {
       case "roleSelection":
         return <RoleSelectionScreen onRoleSelect={handleRoleSelect} userData={userData} />;
       case "patient":
-        return <PatientView onSignOut={() => setScreen("welcome")}/>;
+        return <PatientView userData={userData} onSignOut={() => setScreen("welcome")} />;
       case "doctor":
-        return <DoctorView onSignOut={() => setScreen("welcome")} />;
+        return <DoctorView userData={userData} onSignOut={() => setScreen("welcome")} />;
       default:
         return <WelcomeScreen onLogin={() => handleScreenChange("login")} onSignup={() => handleScreenChange("signup")} />;
     }
