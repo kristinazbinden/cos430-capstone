@@ -181,18 +181,7 @@ const ViewPatientList = ({ userData, onSelectPatient }) => {
                             borderRadius: '4px'
                         }}
                     />
-                    <button
-                        onClick={handleSearchByEmail}
-                        style={{
-                            padding: '0.5rem 1rem',
-                            fontSize: '0.9rem',
-                            backgroundColor: '#007bff',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '4px',
-                            cursor: 'pointer'
-                        }}
-                    >
+                    <button className="option-button" onClick={handleSearchByEmail}>
                         Search Patient
                     </button>
                 </div>
@@ -204,19 +193,7 @@ const ViewPatientList = ({ userData, onSelectPatient }) => {
                     <p><strong>Name:</strong> {selectedPatient.first_name} {selectedPatient.last_name}</p>
                     <p><strong>Email:</strong> {selectedPatient.email}</p>
                     {!patients.some(patient => patient.patient_id === selectedPatient.patient_id) && (
-                        <button
-                            onClick={handleAssignPatient}
-                            style={{
-                                marginTop: '1rem',
-                                padding: '0.5rem 1rem',
-                                fontSize: '0.9rem',
-                                backgroundColor: '#28a745',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '4px',
-                                cursor: 'pointer'
-                            }}
-                        >
+                        <button className="option-button" onClick={handleAssignPatient}>
                             Add Patient
                         </button>
                     )}
