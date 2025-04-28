@@ -159,7 +159,7 @@ const ViewPatientList = ({ userData, onSelectPatient }) => {
                             borderRadius: '4px'
                         }}
                     />
-                    <button className="submit-button" onClick={handleSearchByEmail} >
+                    <button className="width-auto" onClick={handleSearchByEmail} >
                         Search Patient
                     </button>
                 </div>
