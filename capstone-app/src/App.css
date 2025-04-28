@@ -84,6 +84,10 @@ button.submit-button, button.back-button {
   width: 100%;
 }
 
+button.width-auto {
+  width: auto;
+}
+
 button.option-button {
   margin: 0.5rem;
 }
@@ -92,7 +96,7 @@ button.back-button {
   margin-top: 2px;
 }
 
-button.option-button, button.submit-button, button.back-button {
+button.option-button, button.submit-button, button.back-button, button.width-auto {
   background-color: var(--button-color);
   color: white;
   border: none;
@@ -101,7 +105,7 @@ button.option-button, button.submit-button, button.back-button {
   cursor: pointer;
 }
 
-button.option-button:hover, button.submit-button:hover, button.back-button:hover {
+button.option-button:hover, button.submit-button:hover, button.back-button:hover, button.width-auto:hover {
   background-color: var(--button-hover-color);
 }
 
