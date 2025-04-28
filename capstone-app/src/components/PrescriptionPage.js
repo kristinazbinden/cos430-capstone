@@ -159,18 +159,7 @@ const ViewPatientList = ({ userData, onSelectPatient }) => {
                             borderRadius: '4px'
                         }}
                     />
-                    <button
-                        onClick={handleSearchByEmail}
-                        style={{
-                            padding: '0.5rem 1rem',
-                            fontSize: '0.9rem',
-                            backgroundColor: '#007bff',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '4px',
-                            cursor: 'pointer'
-                        }}
-                    >
+                    <button className="submit-button" onClick={handleSearchByEmail} >
                         Search Patient
                     </button>
                 </div>
@@ -284,20 +273,7 @@ const PrescriptionPage = ({ userData }) => {
             />
           </div>
           <div style={{ display: 'flex', alignItems: 'flex-end' }}>
-            <button
-              onClick={handlePrescribe}
-              className="submit-button"
-              //disabled={!selectedPatient || !selectedMedication}
-              style={{
-                padding: '0.6rem 1rem',
-                fontSize: '0.9rem',
-                backgroundColor: '#8a2be2',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: 'pointer'
-              }}
-            >
+            <button className="submit-button" onClick={handlePrescribe}>
               Prescribe
             </button>
           </div>
